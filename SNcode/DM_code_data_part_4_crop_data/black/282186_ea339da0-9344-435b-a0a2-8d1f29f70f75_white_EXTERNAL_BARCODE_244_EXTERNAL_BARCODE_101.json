@@ -1,0 +1,253 @@
+{
+    "annotations": {
+        "bbox": [
+            457.85595703125,
+            522.740966796875,
+            560.1597900390625,
+            558.4066162109375
+        ],
+        "category_id": 101,
+        "area": 313756.14720000006,
+        "iscrowd": 0,
+        "segmentation": [
+            [
+                177.7760772705078,
+                243.53765869140625,
+                737.9358520507812,
+                243.5376739501953,
+                737.9358520507812,
+                801.9442749023438,
+                177.7760772705078,
+                801.9442749023438
+            ]
+        ],
+        "attributes": {
+            "component_model": "EXTERNAL_BARCODE",
+            "position": "EXTERNAL_BARCODE",
+            "panel_id": "245",
+            "occluded": false,
+            "rotation": 359.99909364105275
+        },
+        "image_id": 0,
+        "component_model": "EXTERNAL_BARCODE",
+        "position": "EXTERNAL_BARCODE",
+        "panel_id": 245,
+        "id": 0
+    },
+    "categories": [
+        {
+            "id": 1,
+            "name": "PACKAGE_TYPE_AEC",
+            "supercategory": ""
+        },
+        {
+            "id": 2,
+            "name": "PACKAGE_TYPE_CHIP",
+            "supercategory": ""
+        },
+        {
+            "id": 3,
+            "name": "PACKAGE_TYPE_MLD",
+            "supercategory": ""
+        },
+        {
+            "id": 4,
+            "name": "PACKAGE_TYPE_MELF",
+            "supercategory": ""
+        },
+        {
+            "id": 5,
+            "name": "PACKAGE_TYPE_OSC",
+            "supercategory": ""
+        },
+        {
+            "id": 6,
+            "name": "PACKAGE_TYPE_BGA",
+            "supercategory": ""
+        },
+        {
+            "id": 7,
+            "name": "PACKAGE_TYPE_LCC",
+            "supercategory": ""
+        },
+        {
+            "id": 8,
+            "name": "PACKAGE_TYPE_PLCC",
+            "supercategory": ""
+        },
+        {
+            "id": 9,
+            "name": "PACKAGE_TYPE_QFP",
+            "supercategory": ""
+        },
+        {
+            "id": 10,
+            "name": "PACKAGE_TYPE_SOD",
+            "supercategory": ""
+        },
+        {
+            "id": 11,
+            "name": "PACKAGE_TYPE_SOT",
+            "supercategory": ""
+        },
+        {
+            "id": 12,
+            "name": "PACKAGE_TYPE_SOIC",
+            "supercategory": ""
+        },
+        {
+            "id": 13,
+            "name": "PACKAGE_TYPE_SOJ",
+            "supercategory": ""
+        },
+        {
+            "id": 14,
+            "name": "PACKAGE_TYPE_SOP",
+            "supercategory": ""
+        },
+        {
+            "id": 15,
+            "name": "PACKAGE_TYPE_SON",
+            "supercategory": ""
+        },
+        {
+            "id": 16,
+            "name": "PACKAGE_TYPE_TO",
+            "supercategory": ""
+        },
+        {
+            "id": 17,
+            "name": "PACKAGE_TYPE_XTAL",
+            "supercategory": ""
+        },
+        {
+            "id": 18,
+            "name": "PACKAGE_TYPE_DIP",
+            "supercategory": ""
+        },
+        {
+            "id": 19,
+            "name": "PACKAGE_TYPE_CONNECTOR",
+            "supercategory": ""
+        },
+        {
+            "id": 20,
+            "name": "PACKAGE_TYPE_INS_JACK",
+            "supercategory": ""
+        },
+        {
+            "id": 21,
+            "name": "PACKAGE_TYPE_LCC_PLCC",
+            "supercategory": ""
+        },
+        {
+            "id": 22,
+            "name": "PACKAGE_TYPE_LED",
+            "supercategory": ""
+        },
+        {
+            "id": 23,
+            "name": "PACKAGE_TYPE_PINHEADER",
+            "supercategory": ""
+        },
+        {
+            "id": 24,
+            "name": "PACKAGE_TYPE_QFN",
+            "supercategory": ""
+        },
+        {
+            "id": 25,
+            "name": "PACKAGE_TYPE_RADIO_FREQUENCY",
+            "supercategory": ""
+        },
+        {
+            "id": 26,
+            "name": "PACKAGE_TYPE_SLOT",
+            "supercategory": ""
+        },
+        {
+            "id": 27,
+            "name": "PACKAGE_TYPE_ARRAYS",
+            "supercategory": ""
+        },
+        {
+            "id": 28,
+            "name": "PACKAGE_TYPE_GOLDFINGER",
+            "supercategory": ""
+        },
+        {
+            "id": 29,
+            "name": "PACKAGE_TYPE_SOLDER_BALL",
+            "supercategory": ""
+        },
+        {
+            "id": 30,
+            "name": "PACKAGE_TYPE_INTER_COMPONENT_SOLDER",
+            "supercategory": ""
+        },
+        {
+            "id": 41,
+            "name": "PACKAGE_TYPE_DIP_JW",
+            "supercategory": ""
+        },
+        {
+            "id": 42,
+            "name": "PACKAGE_TYPE_DIP_J",
+            "supercategory": ""
+        },
+        {
+            "id": 51,
+            "name": "PACKAGE_TYPE_CHIP_01005",
+            "supercategory": ""
+        },
+        {
+            "id": 52,
+            "name": "PACKAGE_TYPE_CHIP_0201",
+            "supercategory": ""
+        },
+        {
+            "id": 53,
+            "name": "PACKAGE_TYPE_CHIP_0402",
+            "supercategory": ""
+        },
+        {
+            "id": 99,
+            "name": "PACKAGE_TYPE_UNKNOWN",
+            "supercategory": ""
+        },
+        {
+            "id": 100,
+            "name": "EXTERNAL_MARKPOINT",
+            "supercategory": ""
+        },
+        {
+            "id": 101,
+            "name": "EXTERNAL_BARCODE",
+            "supercategory": ""
+        },
+        {
+            "id": 102,
+            "name": "PACKAGE_TYPE_SWITCH",
+            "supercategory": ""
+        },
+        {
+            "id": 103,
+            "name": "PACKAGE_TYPE_MISSING",
+            "supercategory": ""
+        },
+        {
+            "id": 104,
+            "name": "PACKAGE_TYPE_EMPTY",
+            "supercategory": ""
+        }
+    ],
+    "images": [
+        {
+            "file_name": "G:/download/DM_code_TGLT_ref_Data_20250714_anno/crop_data\\282186_ea339da0-9344-435b-a0a2-8d1f29f70f75_white_EXTERNAL_BARCODE_244_EXTERNAL_BARCODE_101.png",
+            "file_name2": "white.jpg",
+            "id": 1,
+            "width": 813,
+            "height": 808
+        }
+    ]
+}

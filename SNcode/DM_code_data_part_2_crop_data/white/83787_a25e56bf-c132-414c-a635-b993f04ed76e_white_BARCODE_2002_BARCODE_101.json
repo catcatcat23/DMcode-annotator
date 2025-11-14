@@ -1,0 +1,242 @@
+{
+    "annotations": {
+        "bbox": [
+            196.16,
+            194.98,
+            312.32,
+            309.96
+        ],
+        "category_id": 101,
+        "area": 96806.70719999999,
+        "iscrowd": 0,
+        "segmentation": [],
+        "attributes": {
+            "component_model": "BARCODE",
+            "position": "BARCODE",
+            "panel_id": "2002",
+            "occluded": false,
+            "rotation": 0
+        },
+        "image_id": 0,
+        "component_model": "BARCODE",
+        "position": "BARCODE",
+        "panel_id": 2002,
+        "id": 0
+    },
+    "categories": [
+        {
+            "id": 1,
+            "name": "PACKAGE_TYPE_AEC",
+            "supercategory": ""
+        },
+        {
+            "id": 2,
+            "name": "PACKAGE_TYPE_CHIP",
+            "supercategory": ""
+        },
+        {
+            "id": 3,
+            "name": "PACKAGE_TYPE_MLD",
+            "supercategory": ""
+        },
+        {
+            "id": 4,
+            "name": "PACKAGE_TYPE_MELF",
+            "supercategory": ""
+        },
+        {
+            "id": 5,
+            "name": "PACKAGE_TYPE_OSC",
+            "supercategory": ""
+        },
+        {
+            "id": 6,
+            "name": "PACKAGE_TYPE_BGA",
+            "supercategory": ""
+        },
+        {
+            "id": 7,
+            "name": "PACKAGE_TYPE_LCC",
+            "supercategory": ""
+        },
+        {
+            "id": 8,
+            "name": "PACKAGE_TYPE_PLCC",
+            "supercategory": ""
+        },
+        {
+            "id": 9,
+            "name": "PACKAGE_TYPE_QFP",
+            "supercategory": ""
+        },
+        {
+            "id": 10,
+            "name": "PACKAGE_TYPE_SOD",
+            "supercategory": ""
+        },
+        {
+            "id": 11,
+            "name": "PACKAGE_TYPE_SOT",
+            "supercategory": ""
+        },
+        {
+            "id": 12,
+            "name": "PACKAGE_TYPE_SOIC",
+            "supercategory": ""
+        },
+        {
+            "id": 13,
+            "name": "PACKAGE_TYPE_SOJ",
+            "supercategory": ""
+        },
+        {
+            "id": 14,
+            "name": "PACKAGE_TYPE_SOP",
+            "supercategory": ""
+        },
+        {
+            "id": 15,
+            "name": "PACKAGE_TYPE_SON",
+            "supercategory": ""
+        },
+        {
+            "id": 16,
+            "name": "PACKAGE_TYPE_TO",
+            "supercategory": ""
+        },
+        {
+            "id": 17,
+            "name": "PACKAGE_TYPE_XTAL",
+            "supercategory": ""
+        },
+        {
+            "id": 18,
+            "name": "PACKAGE_TYPE_DIP",
+            "supercategory": ""
+        },
+        {
+            "id": 19,
+            "name": "PACKAGE_TYPE_CONNECTOR",
+            "supercategory": ""
+        },
+        {
+            "id": 20,
+            "name": "PACKAGE_TYPE_INS_JACK",
+            "supercategory": ""
+        },
+        {
+            "id": 21,
+            "name": "PACKAGE_TYPE_LCC_PLCC",
+            "supercategory": ""
+        },
+        {
+            "id": 22,
+            "name": "PACKAGE_TYPE_LED",
+            "supercategory": ""
+        },
+        {
+            "id": 23,
+            "name": "PACKAGE_TYPE_PINHEADER",
+            "supercategory": ""
+        },
+        {
+            "id": 24,
+            "name": "PACKAGE_TYPE_QFN",
+            "supercategory": ""
+        },
+        {
+            "id": 25,
+            "name": "PACKAGE_TYPE_RADIO_FREQUENCY",
+            "supercategory": ""
+        },
+        {
+            "id": 26,
+            "name": "PACKAGE_TYPE_SLOT",
+            "supercategory": ""
+        },
+        {
+            "id": 27,
+            "name": "PACKAGE_TYPE_ARRAYS",
+            "supercategory": ""
+        },
+        {
+            "id": 28,
+            "name": "PACKAGE_TYPE_GOLDFINGER",
+            "supercategory": ""
+        },
+        {
+            "id": 29,
+            "name": "PACKAGE_TYPE_SOLDER_BALL",
+            "supercategory": ""
+        },
+        {
+            "id": 30,
+            "name": "PACKAGE_TYPE_INTER_COMPONENT_SOLDER",
+            "supercategory": ""
+        },
+        {
+            "id": 41,
+            "name": "PACKAGE_TYPE_DIP_JW",
+            "supercategory": ""
+        },
+        {
+            "id": 42,
+            "name": "PACKAGE_TYPE_DIP_J",
+            "supercategory": ""
+        },
+        {
+            "id": 51,
+            "name": "PACKAGE_TYPE_CHIP_01005",
+            "supercategory": ""
+        },
+        {
+            "id": 52,
+            "name": "PACKAGE_TYPE_CHIP_0201",
+            "supercategory": ""
+        },
+        {
+            "id": 53,
+            "name": "PACKAGE_TYPE_CHIP_0402",
+            "supercategory": ""
+        },
+        {
+            "id": 99,
+            "name": "PACKAGE_TYPE_UNKNOWN",
+            "supercategory": ""
+        },
+        {
+            "id": 100,
+            "name": "EXTERNAL_MARKPOINT",
+            "supercategory": ""
+        },
+        {
+            "id": 101,
+            "name": "EXTERNAL_BARCODE",
+            "supercategory": ""
+        },
+        {
+            "id": 102,
+            "name": "PACKAGE_TYPE_SWITCH",
+            "supercategory": ""
+        },
+        {
+            "id": 103,
+            "name": "PACKAGE_TYPE_MISSING",
+            "supercategory": ""
+        },
+        {
+            "id": 104,
+            "name": "PACKAGE_TYPE_EMPTY",
+            "supercategory": ""
+        }
+    ],
+    "images": [
+        {
+            "file_name": "G:/download/DM_code_history_Data_20250710_anno/crop_data\\83787_a25e56bf-c132-414c-a635-b993f04ed76e_white_BARCODE_2002_BARCODE_101.png",
+            "file_name2": "white.jpg",
+            "id": 1,
+            "width": 392,
+            "height": 19584
+        }
+    ]
+}
