@@ -1,5 +1,4 @@
-下面是一份可以直接复制到你仓库 `README.md` 的模板（按你仓库当前定位：**ECC200 标准下重建/修复损坏 Data Matrix (DM) 码**，并结合你仓库里已经出现的脚本文件名来写）。仓库当前描述与主要脚本文件名可在仓库首页看到。([GitHub][1])
-另外我在“原理”部分补了 ECC200 的常识说明：ECC200 使用 Reed–Solomon 纠错，能在码部分受损时仍有机会恢复。([Cognex][2])
+
 
 ---
 
@@ -33,13 +32,11 @@ Data Matrix **ECC200** 使用 **Reed–Solomon** 纠错码，在符号部分受�
 > 以仓库首页现有文件为准：([GitHub][1])
 
 * `app.py` / `dev_app.py`：应用入口/调试入口（启动界面或本地服务）
-* `dmcode_cell_editor.py`：网格(cell)编辑/修复相关
 * `encode_decode.py`：编码/解码流程与验证
 * `dmcode_pipeline_robin.py`：批处理/流水线脚本
 * `zxing_test.py`：ZXing 解码测试
 * `collect_model_fail.py` / `make_diff.py` / `copy_sync_checked.py` / `crop_ori_with_checkedcases.py` / `find_ori_image.py`：工程辅助脚本
 * `SNcode/`：数据与中间产物目录（你自己的工程目录）
-* `.gitignore`：忽略规则文件（很关键，避免把大批输出图推上去）([GitHub][1])
 
 ---
 
@@ -54,9 +51,6 @@ Data Matrix **ECC200** 使用 **Reed–Solomon** 纠错码，在符号部分受�
 * （可选）`pyzxing` / `zxing-cpp` 或其他 ZXing 绑定（用于对照解码）
 * （可选）你常用的 DM 解码库：`pylibdmtx` / `libdmtx`（用于对照验证）
 
-> 你仓库里暂时没看到 `requirements.txt`（如后续补上可在这里更新安装方式）。([GitHub][1])
-
----
 
 ## 安装
 
@@ -74,97 +68,106 @@ pip install numpy opencv-python pillow
 # 按需安装 zxing / pylibdmtx 等
 ```
 
+
 ---
 
-## 快速开始（建议的使用路径）
+# DMcode-annotator
 
-### 1) 准备一张/一批 DM 图
+在 **ECC200** 标准下，对损坏/缺失的 Data Matrix (DM) 码进行 **自动重建 + 解码验证 + 标注(mask) + 手工修复** 的工具仓库。
 
-把待处理图片放到一个目录，例如：
+## 项目整体思路
 
+本项目采用“**先自动、再标注、最后人工兜底**”的工作流：
+
+1. **先跑批处理脚本**：自动执行 encode/decode 和结果整理，产出可解码与不可解码样本（badcases）。
+2. **再启动 `app.py`**：对“成功解码 / 未解码”的数据进行 **mask 标注**（用于后续分析/训练/修复）。
+3. **如果自动脚本效果较差（badcases 很多）**：启动 `dev_app.py`，手动设置网格并手动画 DM 码（人工修复兜底）。
+
+---
+
+## SNcode 目录说明（重要）
+
+`SNcode/` 是本项目的数据工作目录，用于存放 DM 数据以及脚本生成的中间结果/检查结果。典型包含：
+
+* **原始/待处理 DM 数据**：图片、csv、同步后的文件等
+* **脚本运行结果**：如 encode/decode 生成的分类结果
+* **badcases**：批处理后 **无法解码或需要进一步处理** 的样本集合（后续重点标注/修复对象）
+* **checkedcases**：人工确认/复核过的样本（如果你有该流程）
+
+
+---
+
+## 推荐工作流（你现在的标准流程）
+
+### Step 1：先跑 encode/decode 批处理（Robin 版本）
+
+先运行批处理脚本（你说的 *encode decode robin*），它会：
+
+* 在 ECC200 逻辑下尝试重建/编码/解码
+* 把结果按“可解码/不可解码”等规则整理
+* 输出到 `SNcode` 下，并生成 `SNcode/badcases`（重点关注）
+
+示例（按你仓库实际脚本名，命令以你本地参数为准）：
+
+```bash
+
+python dmcode_pipeline_robin.py
 ```
-data/
-  input/
-    *.png / *.jpg
-```
 
-### 2) 启动交互式编辑/应用（如果 `app.py` 是界面入口）
+运行完成后，你应该能在 `SNcode/` 下看到整理后的结果，其中 `SNcode/badcases/` 是下一步要重点处理的内容。
+
+---
+
+### Step 2：启动 `app.py` 做 mask 标注
+
+当 Step 1 产出结果后，启动应用对数据做标注：
+
+* 对 **成功解码** 的数据标注 mask（例如定位区域/辅助信息）
+* 对 **未解码（badcases）** 的数据标注 mask（通常更关键，用于分析失败原因/后续修复）
+
+启动方式：
 
 ```bash
 python app.py
 ```
 
-如果你有开发模式入口：
+---
+
+### Step 3：如果自动处理效果差，启动 `dev_app.py` 进行手工修复
+
+当你发现脚本处理效果较差，比如：
+
+* `badcases` 数量很多
+* 自动推断的网格/对齐不稳定
+* 自动重建后仍无法解码
+
+你可以进入 **dev 模式**：
+
+* **手动设置网格（grid）**
+* **手动画 DM 码（cell/模块级）**
+* 用人工方式把码“修回可解码”或至少修到可用于标注/训练
+
+启动方式：
 
 ```bash
 python dev_app.py
 ```
 
-> 如果 `app.py` 实际是 Flask/Gradio/Streamlit，请在脚本里把启动方式（host/port/命令）补到 README 这里。
-
-### 3) 网格级修复（示例思路）
-
-* 用 `dmcode_cell_editor.py` 打开图像 → 定位/对齐 DM 网格 → 手动或半自动修复 cell
-* 导出修复后的网格或修复图
-
-### 4) 编解码验证（对照 ECC200 / ZXing）
-
-* 用 `encode_decode.py` 或 `zxing_test.py` 对修复结果进行解码测试
-* 把“修复前/修复后”的 decode 成功率做对比，必要时用 `make_diff.py` 做差分可视化
-
 ---
 
-## 建议的工作流（更工程化）
+## 其他文件说明
 
-1. **收集失败样本**：`collect_model_fail.py` 把模型/解码失败的样本集中出来
-2. **对齐与裁剪**：`crop_ori_with_checkedcases.py` / `find_ori_image.py` 找原图并裁剪到稳定 ROI
-3. **人工修复**：`dmcode_cell_editor.py` 做 cell 级修复
-4. **批量验证**：`encode_decode.py` + `zxing_test.py` 跑一遍 decode 统计
-5. **同步/归档**：`copy_sync_checked.py` 把确认后的样本同步到 `SNcode/checkedcases/...` 等目录
+仓库中除了上述主流程文件外，其余脚本主要是 **数据处理/工程辅助脚本**，包括但不限于：
 
----
+* 样本收集、筛选、同步：`collect_model_fail.py`、`copy_sync_checked.py`
+* 原图定位/裁剪：`find_ori_image.py`、`crop_ori_with_checkedcases.py`
+* 差分/对比：`make_diff.py`
+* 结果整理/拆分：`split_results_by_prefix.py`、`split_by_bbox_ratio.py`
+* 清理/过滤：`rm_checked_pad.py`
+* 解码对照测试：`zxing_test.py`
 
-## 输出与数据管理（强烈建议）
 
-你的仓库里已经出现了大量输出图/结果图路径（例如 `model_output/...` 一类），这类目录**不建议纳入版本管理**，否则仓库会快速膨胀、push 很痛苦。
 
-建议做法：
-
-* 只提交：**核心代码 / 配置 / 少量示例图片（可选）/ 文档**
-* 忽略：`model_output/`、`__pycache__/`、大体量数据目录、临时产物目录
-
-仓库里已经有 `.gitignore`，你可以把常见规则补齐到类似下面（示例）：
-
-```gitignore
-# python
-__pycache__/
-*.pyc
-.venv/
-.vscode/
-
-# outputs
-model_output/
-outputs/
-runs/
-tmp/
-*.log
-
-# datasets
-data/
-SNcode/**/ori_sync/
-SNcode/**/checkedcases/
-```
-
----
-
-## Roadmap（可选）
-
-* [ ] 把依赖整理成 `requirements.txt`
-* [ ] 给 `app.py` 的启动方式加参数说明（输入目录、输出目录、端口等）
-* [ ] 增加一个最小可复现 demo：一张“损坏 DM” + 修复后的对比 + decode 日志
-* [ ] 增加批处理统计报告（成功率、失败原因聚类、可视化）
-
----
 
 ## 致谢（可选）
 
