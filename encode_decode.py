@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 import re
 import numpy as np
-import zxing
+import zxing_test
 
 def visualize(img, title=''):
     plt.figure()
@@ -20,11 +20,11 @@ def visualize(img, title=''):
 
 data_folder = '/mnt/c/Shiyuan/data/DMcode/'
 # img_path = os.path.join(data_folder, 'encoded_datamatrix1.png')
-img_path = os.path.join(data_folder, 'ms_dm2.png')
+img_path = f'/home/cat/workspace/DMCODE/backup/style_dm/32x32/1.png'
 img = Image.open(img_path)
 img = img.convert('L')
 # img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-reader = zxing.BarCodeReader()
+reader = zxing_test.BarCodeReader()
 # img = img.point(mode='imageops')
 for angle in [0, 90, 180, 270]:
     print(f'angle={angle}')
@@ -36,21 +36,23 @@ for angle in [0, 90, 180, 270]:
     # zxing_res = reader.decode(img_path)
     # if zxing_res:
     #     print("zxing data:", zxing_res[0].text)
-    decoded_objects = decode(dm_img)
+    decoded_objects = decode(dm_img, max_count=1)
     # visualize(255 - img)
     if len(decoded_objects) == 0:
+        print("No data decoded")
         continue
 
     for obj in decoded_objects:
         print("Decoded data:", obj.data)
-        visualize(dm_img)
+        # visualize(dm_img)
         content = obj.data.decode('utf-8')
         clean_content = re.sub(r'[\x00-\x1f]', '', content)
         encoded = encode(content.encode('utf-8'))  # Encode to Data Matrix
         encoded_img = Image.frombytes('RGB', (encoded.width, encoded.height), encoded.pixels)
-        encoded_img.save( os.path.join(data_folder, 'encoded_datamatrix0.png'))
+        # encoded_img.save( os.path.join(data_folder, 'encoded_datamatrix0.png'))
 
         decoded_objects2 = decode(encoded_img)
         print("Decoded data:", decoded_objects2[0].data)
         print(decoded_objects2[0].data == obj.data)
+        encoded_img = encoded_img.rotate(90)
         visualize(encoded_img)

@@ -103,44 +103,78 @@ def count_transitions2(binary_arr):
     else:
         return int(np.median(valid_transition_list))
 
+# def locate_timing_pattern(binary_dm_image, band_offset, band_width, method_flag=1):
+#     """
+#     定位timing pattern的位置
+#     :param binary_dm_image: DM码二值图
+#     :param band_offset: offset
+#     :param band_width: 边宽
+#     :return: 横向和纵向的timing pattern的位置
+#     """
+#     band_offset = 1
+#     band_width = 15
+#     if method_flag == 1:
+#         # 提取DM码二值图的四个边
+#         if np.max(binary_dm_image) == 255:
+#             # 转成0/1的值
+#             binary_dm_image = (binary_dm_image / 255).astype(np.uint8)
+
+#         top_row = binary_dm_image[band_offset: band_offset + band_width, :]
+#         bottom_row = binary_dm_image[-band_offset - 1 - band_width:-band_offset - 1, :]
+#         left_col = binary_dm_image[:, band_offset: band_offset + band_width]
+#         right_col = binary_dm_image[:, -band_offset - 1 - band_width: -band_offset - 1]
+
+#         # 计算每个边的跳变数量
+#         transitions = {
+#             'top': count_transitions2(top_row),
+#             'bottom': count_transitions2(bottom_row),
+#             'left': count_transitions2(left_col.T),
+#             'right': count_transitions2(right_col.T)
+#         }
+#     print("DEBUG transitions:", transitions, "shape:", binary_dm_image.shape)
+
+
+#     # 跳变数量最多的二两边是Timing pattern
+#     sorted_edges = sorted(transitions.items(), key=lambda x: x[1], reverse=True)
+#     timing_edges = sorted_edges[:2]
+
+#     # 检查Timing pattern的位置是否合理(例如2个timing patterns都是横的或都是竖的）
+#     horizontal_timing = max([e for e in timing_edges if e[0] in ['top', 'bottom']], key=lambda x: x[1])[0]
+#     vertical_timing = max([e for e in timing_edges if e[0] in ['left', 'right']], key=lambda x: x[1])[0]
+
+#     return horizontal_timing, vertical_timing
+
+
 def locate_timing_pattern(binary_dm_image, band_offset, band_width, method_flag=1):
-    """
-    定位timing pattern的位置
-    :param binary_dm_image: DM码二值图
-    :param band_offset: offset
-    :param band_width: 边宽
-    :return: 横向和纵向的timing pattern的位置
-    """
-    band_offset = 1
-    band_width = 15
-    if method_flag == 1:
-        # 提取DM码二值图的四个边
-        if np.max(binary_dm_image) == 255:
-            # 转成0/1的值
-            binary_dm_image = (binary_dm_image / 255).astype(np.uint8)
+    # ❌ 删掉 band_offset=1 / band_width=15 这两行
 
-        top_row = binary_dm_image[band_offset: band_offset + band_width, :]
-        bottom_row = binary_dm_image[-band_offset - 1 - band_width:-band_offset - 1, :]
-        left_col = binary_dm_image[:, band_offset: band_offset + band_width]
-        right_col = binary_dm_image[:, -band_offset - 1 - band_width: -band_offset - 1]
+    if np.max(binary_dm_image) == 255:
+        binary_dm_image = (binary_dm_image / 255).astype(np.uint8)
 
-        # 计算每个边的跳变数量
-        transitions = {
-            'top': count_transitions2(top_row),
-            'bottom': count_transitions2(bottom_row),
-            'left': count_transitions2(left_col.T),
-            'right': count_transitions2(right_col.T)
-        }
+    H, W = binary_dm_image.shape[:2]
 
-    # 跳变数量最多的二两边是Timing pattern
-    sorted_edges = sorted(transitions.items(), key=lambda x: x[1], reverse=True)
-    timing_edges = sorted_edges[:2]
+    # ✅ 小图自适应：这张(25,100)会得到 band_width≈2
+    band_width  = max(1, min(band_width, max(1, min(H, W)//10)))
+    band_offset = max(0, min(band_offset, max(0, min(H, W)//20)))
 
-    # 检查Timing pattern的位置是否合理(例如2个timing patterns都是横的或都是竖的）
-    horizontal_timing = max([e for e in timing_edges if e[0] in ['top', 'bottom']], key=lambda x: x[1])[0]
-    vertical_timing = max([e for e in timing_edges if e[0] in ['left', 'right']], key=lambda x: x[1])[0]
+    top_row    = binary_dm_image[band_offset: band_offset + band_width, :]
+    bottom_row = binary_dm_image[-band_offset - 1 - band_width:-band_offset - 1, :]
+    left_col   = binary_dm_image[:, band_offset: band_offset + band_width]
+    right_col  = binary_dm_image[:, -band_offset - 1 - band_width: -band_offset - 1]
+
+    transitions = {
+        'top': count_transitions2(top_row),
+        'bottom': count_transitions2(bottom_row),
+        'left': count_transitions2(left_col.T),
+        'right': count_transitions2(right_col.T)
+    }
+    print("DEBUG transitions:", transitions, "shape:", binary_dm_image.shape)
+    # ✅ 横向只在 top/bottom 里选；纵向只在 left/right 里选（不会再空）
+    horizontal_timing = 'top' if transitions['top'] >= transitions['bottom'] else 'bottom'
+    vertical_timing   = 'left' if transitions['left'] >= transitions['right'] else 'right'
 
     return horizontal_timing, vertical_timing
+
 
 def search_dm_dimensions(dm_image, possible_dimensions, timing_pattern_pos):
     """
@@ -244,6 +278,54 @@ def compute_dm_array(binary_dm_image, rows, cols, kernel_size, ratio_threshold, 
                 sync_dm_array[i, j] = 1
 
     return sync_dm_array, binary_image_show
+# def compute_dm_array(binary_dm_image, rows, cols, kernel_size=1, ratio_threshold=0.0, save_image=False):
+#     # 确保是 0/255
+#     binary_dm_image = binary_dm_image.astype(np.uint8)
+
+#     # 先把图放大，让每个 cell 至少 6px（非常关键）
+#     h0, w0 = binary_dm_image.shape[:2]
+#     min_cell = min(h0 / rows, w0 / cols)
+#     if min_cell < 6:
+#         scale = int(np.ceil(6 / min_cell))
+#         binary_dm_image = cv2.resize(
+#             binary_dm_image, (w0 * scale, h0 * scale), interpolation=cv2.INTER_NEAREST
+#         )
+
+#     binary_image_show = cv2.cvtColor(binary_dm_image, cv2.COLOR_GRAY2RGB)
+
+#     h, w = binary_dm_image.shape[:2]
+#     cell_w = w / cols
+#     cell_h = h / rows
+#     sync = np.zeros((rows, cols), dtype=np.uint8)
+
+#     # kernel_size 自适应（避免跨格）
+#     k = max(1, int(min(cell_w, cell_h) * 0.2))
+#     k = min(k, 2)
+
+#     for i in range(rows):
+#         for j in range(cols):
+#             y1 = int(i * cell_h)
+#             y2 = int((i + 1) * cell_h) if i < rows - 1 else h
+#             x1 = int(j * cell_w)
+#             x2 = int((j + 1) * cell_w) if j < cols - 1 else w
+
+#             if save_image:
+#                 cv2.rectangle(binary_image_show, (x1, y1), (x2, y2), (0, 255, 0), 1)
+
+#             cx = (x1 + x2) // 2
+#             cy = (y1 + y2) // 2
+
+#             yA = max(0, cy - k); yB = min(h, cy + k + 1)
+#             xA = max(0, cx - k); xB = min(w, cx + k + 1)
+#             roi = binary_dm_image[yA:yB, xA:xB]
+#             if roi.size == 0:
+#                 continue
+
+#             # 这里假设黑=0 白=255：黑比例高 => 该 cell 判黑(0)，否则白(1)
+#             black_ratio = np.mean(roi == 0)
+#             sync[i, j] = 0 if black_ratio > ratio_threshold else 1
+
+#     return sync, binary_image_show
 
 def correct_timing_finder_pattern(sync_dm_array, horizontal_timing_pos, vertical_timing_pos):
     """
@@ -393,14 +475,18 @@ if __name__ == '__main__':
 
     # ==== 数据文件夹路径 ======
     task_folder = '/home/cat/workspace/DMCODE/SNcode/'
-    # data_folder = os.path.join(task_folder, 'DM_code_data_part_*')
-    data_folder = os.path.join(task_folder, 'DM_code_data_part_3_*')
+    # data_folder = os.path.join(task_folder, 'DM_code_data_part_*')//home/cat/workspace/DMCODE/SNcode/flat_src_rect_250113
+    data_folder = os.path.join(task_folder, 'tg1')
     image_format = '.png'
     # 所有DM码图片路径
-    image_path_list = glob.glob(f'{data_folder}/*/*{image_format}')
+    image_path_list = sorted(glob.glob(os.path.join(data_folder, "*101.png")))
+
     # 用于存bad cases图片的路径
     bad_cases_folder = os.path.join(task_folder, 'badcases')
     os.makedirs(bad_cases_folder, exist_ok=True)
+    # ✅ 新增：创建encode成功文件的专属文件夹
+    encoded_success_folder = os.path.join(task_folder, 'encoded_success')
+    os.makedirs(encoded_success_folder, exist_ok=True)
     # 读取预处理参数
     image_meta_info_df = pd.read_csv(os.path.join(task_folder, 'combined_DM_code_data3.csv'))
 
@@ -413,7 +499,7 @@ if __name__ == '__main__':
 
     # 单个cell内用于判断cell是白还是黑的区域及阈值
     kernel_size = 2
-    ratio_threshold = 0.0
+    ratio_threshold = 0.
     # 生成DM码的cell宽度和外边padding尺寸
     sync_cell_width = 5
     border_width = 10
@@ -433,14 +519,20 @@ if __name__ == '__main__':
     for id, image_path in enumerate(image_path_list):
         # if id not in forailed_list_tmpt:
         #     continue
+        print(f'Processing image {id + 1}/{len(image_path_list)}: {image_path}')
         # 读取图片
         image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        image_rgb = cv2.imread(image_path, cv2.IMREAD_COLOR)
         h, w = image.shape
         image_name = image_path.split('/')[-1]
         # if image_name != '3c7cca23-fa96-4dc2-8589-13c0a45f76eb_white_BARCODE_101_BARCODE_101.png':
         #     continue
         # 读取标注
         anno_path = image_path.replace(image_format, '.json')
+        if not os.path.exists(anno_path):
+            print(f"[WARN] JSON标注文件不存在，跳过: {anno_path}")
+            continue
+
         annotation_json = json.load(open(anno_path))
         bbox = np.array(annotation_json['annotations']['bbox']).astype(np.int32)
         angle = annotation_json['annotations']['attributes']['rotation']
@@ -449,18 +541,51 @@ if __name__ == '__main__':
         # 读取前处理参数
         # 编程阶段Programming: 参数由默认config设定
         # 检测阶段Inspection: 参数读取金版编程阶段设定的参数
-        image_meta_info = image_meta_info_df[image_meta_info_df['image_name'] == image_name].squeeze()
-        dm_color = image_meta_info['finder_color']
-        threshold = image_meta_info['threshold']
-        # threshold = 50
-        # 编程阶段，根据检测框外扩做精定位的外扩尺寸
-        expand =  image_meta_info['expand']
-        # 前处理用的形态学参数
-        morph_op = image_meta_info['morph_op']
-        morph_iters = image_meta_info['morph_iters']
-        # 用于判断哪两边是timing pattern的区域设定
+        # image_meta_info = image_meta_info_df[image_meta_info_df['image_name'] == image_name].squeeze()
+        # dm_color = 'black'
+        # threshold = -1
+        # # threshold = 50
+        # # 编程阶段，根据检测框外扩做精定位的外扩尺寸
+        # expand =  0
+        # # 前处理用的形态学参数
+        # morph_op = 3
+        # morph_iters = 1
+
+
+        # 读取前处理参数
+        rows = image_meta_info_df[image_meta_info_df['image_name'] == image_name]
+
+        if rows.empty:
+            print(f"{image_name}，使用默认参数")
+
+            dm_color   = 'white'            # 你这批都是 white_BARCODE_...
+            threshold  = -1                 # 走 OTSU 自动阈值
+            expand     = 0              # bbox 外扩一点，后面觉得不够可以调
+            morph_op   = 3
+            morph_iters = 1
+
+            # ⭐ 这里补一个 image_meta_info，方便后面统一写 detection_res
+            image_meta_info = pd.Series({
+                "image_name": image_name,
+                "finder_color": dm_color,
+                "threshold": threshold,
+                "expand": expand,
+                "morph_op": morph_op,
+                "morph_iters": morph_iters,
+            })
+        else:
+            # 有配置时，走 CSV 的参数
+            image_meta_info = rows.iloc[0]
+
+            dm_color   = image_meta_info['finder_color']
+            threshold  = image_meta_info['threshold']
+            expand     = float(image_meta_info['expand'])
+            morph_op   = image_meta_info['morph_op']
+            morph_iters = image_meta_info['morph_iters']
+
         band_width = 3
         band_offset = expand + 3
+
 
         if action == 'nopreprocess':
             # 原始的DM码解码链路
@@ -479,6 +604,21 @@ if __name__ == '__main__':
             else:
                 dm_image = crop_rotated_rect(image, int(cx), int(cy), int(w1 + expand),
                                            int(h1 + expand), angle)
+                                # ===== 直接保存到同目录（同一个 data_folder）=====
+
+                base_name = os.path.splitext(image_name)[0]  # 去掉.png
+                prefix = f"{id}_{base_name}"
+                dir_ = os.path.dirname(image_path)  # 当前图片所在目录
+
+                # 严格 bbox
+                ori = crop_rotated_rect(image_rgb, float(cx), float(cy), float(w1), float(h1), float(angle))
+                cv2.imwrite(os.path.join(bad_cases_folder, f"{prefix}_ori.png"), ori)
+
+                # 外扩10% bbox
+                ori_pad10 = crop_rotated_rect(image_rgb, float(cx), float(cy), float(w1) * 1.10, float(h1) * 1.10, float(angle))
+                cv2.imwrite(os.path.join(bad_cases_folder, f"{prefix}_ori_pad10.png"), ori_pad10)
+# ===============================================
+
             # === 预处理DM码图片 ===
             # dm_color, resize_ratio, threshold, morph_op, morph_iter都是可以人为设定的参数
             # 确保长方形DM码，高是短边
@@ -544,7 +684,8 @@ if __name__ == '__main__':
 
             # === 确定DM码每个cell的颜色, 生成最终解码的DM码  ===
             # 确定DM码每个cell的颜色, 输出一个DM码矩阵
-            sync_dm_array, binary_dm_image_show = compute_dm_array(binary_dm_image, rows, cols, kernel_size, ratio_threshold, save_image)
+            sync_dm_array, binary_dm_image_show = compute_dm_array(binary_dm_image, rows, cols,kernel_size,ratio_threshold, save_image=save_image)
+
             # 纠正最外圈的timing pattern and finder pattern
             sync_dm_array = correct_timing_finder_pattern(sync_dm_array, horizontal_timing, vertical_timing)
             # 生成最终使用的DM码图片
@@ -591,40 +732,48 @@ if __name__ == '__main__':
 
         else:
             obj = decoded_res[0]
-            content = obj.data.decode('utf-8')
+            content = obj.data.decode('utf-8', errors='ignore')
             clean_content = re.sub(r'[\x00-\x1f]', '', content)
-            encoded = encode(clean_content.encode('utf-8'))  # Encode to Data Matrix
+
+            # 看一下解出的长度，方便你之后排查
+            # print(f"[INFO] decoded len = {len(clean_content)} for {image_name}")
+
+            from pylibdmtx.pylibdmtx import PyLibDMTXError
+
+            try:
+                encoded = encode(clean_content.encode('utf-8'))  # Encode to Data Matrix
+            except PyLibDMTXError as e:
+                print(f"[WARN] re-encode failed for {image_name}: {e}")
+                # 当作“解码失败样本”处理，跳过后面 encoder_dm 的流程
+                counter += 1
+                failed_list.append(id)
+                continue
+
             encoded_img = Image.frombytes('RGB', (encoded.width, encoded.height), encoded.pixels)
-            
+                    
             if save_image:
                 encoded_img = encoded_img.rotate(90)
-                    # 保存libdmtx编码生成的DM码图片，方便对比
                 encoded_img.save(
-                    os.path.join(bad_cases_folder, f"{prefix}_encoder_dm.jpg")
+                    os.path.join(bad_cases_folder, f"{prefix}_encoder_dm.png")
                 )
-                                # === 把 encoder 图也转成 cell 级矩阵 ===
-                # 1) PIL 转 numpy 灰度图
-                enc_gray = np.array(encoded_img.convert("L"))
 
-                # 2) 简单二值化（阈值可以用 OTSU）
+                # === 把 encoder 图也转成 cell 级矩阵 ===
+                enc_gray = np.array(encoded_img.convert("L"))
                 _, enc_binary = cv2.threshold(enc_gray, 0, 255, cv2.THRESH_OTSU)
 
-                # 3) 去掉外围全白边（找最大连通区域）
                 x_e, y_e, w_e, h_e, _ = refine_dm_bbox(enc_binary, expand=0, rotated=False)
                 enc_symbol = enc_binary[y_e:y_e + h_e, x_e:x_e + w_e]
 
-                # 4) 用 *同样的* rows / cols 切格子，得到 encoder 的 cell 矩阵
                 encoder_dm_array, _ = compute_dm_array(
                     enc_symbol,
-                    rows,              # 和 sync_dm_array 一样的行数
-                    cols,              # 和 sync_dm_array 一样的列数
-                    kernel_size=2,     # 你可以用同一个 kernel_size
-                    ratio_threshold=0.5,  # 这里可以设 0.5，让“白像素比例 > 0.5”认为是 1
+                    rows,
+                    cols,
+                    kernel_size=2,
+                    ratio_threshold=0.5,
                     save_image=False
                 )
+                np.save(os.path.join(bad_cases_folder, f'{prefix}_encoder_dm_array.npy'), encoder_dm_array)
 
-                # 5) 保存 encoder 的 cell 级矩阵
-                np.save(os.path.join(bad_cases_folder, f"{prefix}_encoder_dm_array.npy"), encoder_dm_array)
 
             # visualize(binary_dm_image)
             # visualize(sync_dm_code_with_padding)

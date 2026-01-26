@@ -1,0 +1,9 @@
+# 先确保目标目录存在
+mkdir -p /home/cat/workspace/DMCODE/backup/DA_2444/clean
+
+# 进入 checkedcases 目录
+cd /home/cat/workspace/DMCODE/SNcode/checkedcases
+
+# 查找并复制两个后缀的 png
+find . \( -name '*crop_nopad.png' -o -name '*sync_dm_checked_nopad.png' \) \
+  -exec cp {} /home/cat/workspace/DMCODE/backup/DA_2444/clean/ \;

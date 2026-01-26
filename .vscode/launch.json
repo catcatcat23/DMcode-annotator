@@ -1,0 +1,42 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug: predict_and_crop_dmcode (byd_all_rectangle)",
+      "type": "debugpy",
+      "request": "launch",
+
+      // ✅ 你的脚本路径（按你给的路径写死）
+      "program": "/home/cat/workspace/DMCODE/codebar_rotate/demo/predict_and_crop_dmcode.py",
+
+      // ✅ 在哪个目录作为工作目录运行（建议项目根目录）
+      "cwd": "/home/cat/workspace/DMCODE/codebar_rotate",
+
+      // ✅ 命令行参数：等价于你贴的那条 python xxx.py ...
+      "args": [
+        "/home/sailyond/xianjianming/data/DM/byd_all_rectangle",
+        "/mnt/seaweedfs-ssd/xiningliu/workspace/odb-rotate/2025-12-22~liuxining~rotated_rtmdet_t-dota_320_v2_codebar_le90_bs128_ep36_lr003_EIOU_AMP_20251022_e486/best_dota_AP90_epoch_102.pth",
+        "/mnt/seaweedfs-ssd/xiningliu/workspace/odb-rotate/2025-12-22~liuxining~rotated_rtmdet_t-dota_320_v2_codebar_le90_bs128_ep36_lr003_EIOU_AMP_20251022_e486/best_dota_AP90_epoch_102.pth",
+        "--cfg-options",
+        "model.test_cfg.score_thr=0.3",
+        "--out-file",
+        "./output/byd_all_rectangle_detect_results"
+      ],
+
+      // ✅ 让断点能进第三方库（深度学习框架里经常要）
+      "justMyCode": false,
+
+      // ✅ 用终端跑，方便看完整 stdout/stderr
+      "console": "integratedTerminal",
+
+      // ✅ 如果你用的是 conda/venv 的 python，改成对应解释器路径
+      // 例如："/home/cat/miniconda3/envs/xxx/bin/python"
+      "python": "/home/cat/miniconda3/envs/cat/bin/python",
+
+      // 可选：需要的话加 GPU / CUDA_VISIBLE_DEVICES
+      "env": {
+        "CUDA_VISIBLE_DEVICES": "0"
+      }
+    }
+  ]
+}
