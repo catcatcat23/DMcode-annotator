@@ -12,7 +12,6 @@
 
 ## 你能用它做什么
 
-* **网格级别编辑/修复**：对 DM 码的 cell（黑/白模块）做人工/半自动调整（见 `dmcode_cell_editor.py`）。([GitHub][1])
 * **ECC200 编码/解码验证**：把重建后的网格/图像进行编码或解码测试（见 `encode_decode.py`、`zxing_test.py`）。([GitHub][1])
 * **批处理流水线**：对一批图像/结果做整理、筛选、差分、同步等工程化操作（如 `dmcode_pipeline_robin.py`、`collect_model_fail.py`、`make_diff.py`、`copy_sync_checked.py` 等）。([GitHub][1])
 * **Web/本地应用入口（若你写的是界面）**：仓库里有 `app.py` / `dev_app.py`，通常用于启动交互式页面或调试入口。([GitHub][1])
