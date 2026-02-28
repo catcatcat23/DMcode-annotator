@@ -174,13 +174,7 @@ python dev_app.py
 
 ---
 
-## License
 
-（如果你还没选许可证，可以先写 `TBD`，或者补一个 MIT/Apache-2.0）
-
----
-
-如果你把 `app.py` / `dmcode_cell_editor.py` 的“实际启动方式”和“输入输出格式”（比如：读一张图还是读一个目录、输出保存在哪里、导出网格用什么格式）贴我一段，我可以把 README 里“快速开始”那部分改成**完全可复制运行**的版本，并把参数表也补齐。
 
 [1]: https://github.com/catcatcat23/DMcode-annotator "GitHub - catcatcat23/DMcode-annotator: ecc200标准下重建损坏dm码"
 [2]: https://www.cognex.com/resources/symbologies/2-d-matrix-codes/data-matrix-codes?utm_source=chatgpt.com "Data Matrix Codes - Symbologies"
